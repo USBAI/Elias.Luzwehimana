@@ -65,39 +65,34 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
 
           <div className="room-scroll" ref={scroller}>
             <article className="room-entry" data-swap={swap} key={id}>
-              <header className="room-head">
-                <div className="room-head-top">
-                  {(e.logo || e.mark) && <Logo src={e.logo} mark={e.mark} name={s.title} />}
-                  {e.partner && (<><span className="logo-x">{e.partner.note}</span><Logo src={e.partner.logo} name={e.partner.name} /></>)}
-                  {e.logos?.map((l) => <Logo key={l.src} src={l.src} name={l.name} />)}
+              <header className="room-hero" data-image={!!e.image}>
+                <div className="room-hero-copy">
+                  <div className="room-head-top">
+                    {(e.logo || e.mark) && <Logo src={e.logo} mark={e.mark} name={s.title} />}
+                    {e.partner && (<><span className="logo-x">{e.partner.note}</span><Logo src={e.partner.logo} name={e.partner.name} /></>)}
+                    {e.logos?.map((l) => <Logo key={l.src} src={l.src} name={l.name} />)}
+                  </div>
                   <p className="room-kicker">{s.kicker}</p>
+                  <h2 className="room-title">{s.title}</h2>
+                  {s.meta && (
+                    <dl className="room-facts">
+                      {s.meta.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
+                    </dl>
+                  )}
                 </div>
-                <h2 className="room-title">{s.title}</h2>
-                {s.meta && (
-                  <dl className="room-facts">
-                    {s.meta.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
-                  </dl>
+                {e.image && (
+                  <figure className="room-hero-image">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={e.image} alt="" style={{ objectPosition: e.position }} />
+                    {e.credit && <figcaption>{e.credit}</figcaption>}
+                  </figure>
                 )}
               </header>
-
-              {e.image && (
-                <figure className="room-image">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={e.image} alt="" />
-                </figure>
-              )}
 
               <div className="room-body">
                 <div className="room-text">
                   <p className="room-lead">{s.body[0]}</p>
                   {s.body.slice(1).map((p) => <p key={p}>{p}</p>)}
-
-                  {s.sections?.map((sec) => (
-                    <section key={sec.title} className="room-section">
-                      <h3>{sec.title}</h3>
-                      <ul>{sec.items.map((it) => <li key={it}>{it}</li>)}</ul>
-                    </section>
-                  ))}
                 </div>
                 {(s.tags || s.link) && (
                   <aside className="room-side">
@@ -106,6 +101,34 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
                   </aside>
                 )}
               </div>
+
+              {s.figure && (
+                <section className="room-figure">
+                  <a className="room-figure-img" href={s.figure.href ?? s.figure.src} target="_blank" rel="noreferrer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={s.figure.src} alt={s.figure.alt} />
+                  </a>
+                  <div className="room-figure-copy">
+                    <p className="room-side-label">{s.figure.label}</p>
+                    <h3>{s.figure.title}</h3>
+                    <p>{s.figure.text}</p>
+                    {s.meta && <dl>{s.meta.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>}
+                    {s.figure.href && <a className="btn btn-dark" href={s.figure.href} target="_blank" rel="noreferrer">Open the PDF ↗</a>}
+                  </div>
+                </section>
+              )}
+
+              {s.sections && (
+                <div className="room-sections">
+                  {s.sections.map((sec, n) => (
+                    <section key={sec.title} className="room-section">
+                      <span className="room-section-n">{String(n + 1).padStart(2, "0")}</span>
+                      <h3>{sec.title}</h3>
+                      <ul>{sec.items.map((it) => <li key={it}>{it}</li>)}</ul>
+                    </section>
+                  ))}
+                </div>
+              )}
 
               <section className="room-suggest">
                 <p className="room-side-label">You might also like</p>

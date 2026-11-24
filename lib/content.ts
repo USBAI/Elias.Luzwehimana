@@ -6,6 +6,7 @@ export type Story = {
   tags?: string[];
   link?: { label: string; href: string };
   sections?: { title: string; items: string[] }[];
+  figure?: { src: string; alt: string; label: string; title: string; text: string; href?: string };
 };
 
 export const person = {
@@ -42,7 +43,7 @@ export const slides: Slide[] = [
       ],
       body: [
         "I'm a software engineer with 5+ years across telecom, construction tech and B2B SaaS: Telia, Coredination (including a client engagement with Scania) and Symetri.",
-        "Alongside that I run Clarge, a small software studio, and Vornify AI, a product I built and operate.",
+        "Alongside that I founded and ran Clarge, a small software studio, until November 2026, and built Vornify AI, a product I operate.",
         "I'm looking for a senior, founding or product engineering role.",
       ],
       meta: [["Based in", "Stockholm"], ["Focus", "Product & platform engineering"], ["Open to", "Hybrid, on-site or remote"]],
@@ -173,10 +174,36 @@ export const work: Work[] = [
 
 export const projects: Work[] = [
   {
+    name: "Clarge",
+    banner: { src: "/banners/clarge.webp", credit: "clarge.se" },
+    logo: "/logos/clarge.svg",
+    type: "Founder · Software studio",
+    facts: ["Founder", "Client delivery", "Full-stack"],
+    href: "https://clarge.se",
+    summary: "A Stockholm software studio I founded and ran from 2022 to 2026. It designed, built and ran software for companies.",
+    stack: ["React", "TypeScript", ".NET", "Python", "AWS"],
+    story: {
+      kicker: "Clarge · Founder",
+      title: "Clarge",
+      sections: [
+        { title: "How a Clarge engagement ran", items: ["Understand: system context and a first agreed scope", "Plan: milestones, decisions and next actions", "Build: working changes with visible progress", "Continue: documented releases and a clear next step"] },
+        { title: "What clients got", items: ["Elias as the direct contact doing the engineering", "A shared delivery record of context and decisions", "Working demos and up-to-date documentation"] },
+      ],
+      body: [
+        "Clarge is the software studio I founded and ran in Stockholm from July 2022 to November 2026. We partnered with companies to design, build and run their software.",
+        "I worked directly with clients on the code and systems, from the first technical decisions to production.",
+      ],
+      meta: [["Role", "Founder"], ["Period", "Jul 2022 – Nov 2026"], ["Web", "clarge.se"]],
+      tags: ["Client delivery", "Architecture", "Full-stack"],
+      link: { label: "Visit clarge.se", href: "https://clarge.se" },
+    },
+  },
+  {
     name: "Vornify AI",
     banner: { src: "/banners/vornify.webp", credit: "vornify.se" },
     logo: "/logos/vornify.svg",
     type: "Founder · AI product",
+    facts: ["Founder", "AI product", "Built and run by me"],
     status: "Live",
     href: "https://vornify.se",
     featured: true,
@@ -200,30 +227,6 @@ export const projects: Work[] = [
       link: { label: "Visit vornify.se", href: "https://vornify.se" },
     },
   },
-  {
-    name: "Clarge",
-    banner: { src: "/banners/clarge.webp", credit: "clarge.se" },
-    logo: "/logos/clarge.svg",
-    type: "Founder · Software studio",
-    href: "https://clarge.se",
-    summary: "A Stockholm software studio that designs, builds and runs software for companies.",
-    stack: ["React", "TypeScript", ".NET", "Python", "AWS"],
-    story: {
-      kicker: "Clarge · Founder",
-      title: "Clarge",
-      sections: [
-        { title: "How a Clarge engagement runs", items: ["Understand: system context and a first agreed scope", "Plan: milestones, decisions and next actions", "Build: working changes with visible progress", "Continue: documented releases and a clear next step"] },
-        { title: "What clients get", items: ["Elias as the direct contact doing the engineering", "A shared delivery record of context and decisions", "Working demos and up-to-date documentation"] },
-      ],
-      body: [
-        "Clarge is the software studio I run in Stockholm. We partner with companies to design, build and run their software.",
-        "I work directly with clients on the code and systems, from the first technical decisions to production.",
-      ],
-      meta: [["Role", "Founder"], ["Since", "Jul 2022"], ["Web", "clarge.se"]],
-      tags: ["Client delivery", "Architecture", "Full-stack"],
-      link: { label: "Visit clarge.se", href: "https://clarge.se" },
-    },
-  },
 ];
 
 export type Role = { logo?: string; mark?: string; company: string; title: string; period: string; place: string; text: string; story?: Story };
@@ -232,19 +235,52 @@ export const experience: Role[] = [
   { logo: "/logos/symetri-full.svg", company: "Symetri Europe", title: "Senior Software Engineer", period: "Aug 2026 – Nov 2026", place: "Full-time · Solna · Hybrid", text: "Owned the internal user-information system and its codebase, working with the Head of Technology and the CISO." },
   { logo: "/logos/telia.svg", company: "Telia", title: "Lead Software Engineer", period: "Jun 2025 – Aug 2026", place: "Full-time · Solna · On-site", text: "Led engineering on customer-facing portals and services in Broadband Data Mediation, moving them to scalable, containerised deployments." },
   { logo: "/logos/coredination.svg", company: "Coredination", title: "Software Engineer", period: "Oct 2021 – May 2025", place: "Contract · Sundbyberg · On-site", text: "B2B field service SaaS on serverless AWS, React and GraphQL, including five months of backend integrations for Scania." },
-  { logo: "/logos/clarge.svg", company: "Clarge", title: "Founder", period: "Jul 2022 – Present", place: "Stockholm", text: "A software studio that designs, builds and runs software for companies." },
+  { logo: "/logos/clarge.svg", company: "Clarge", title: "Founder", period: "Jul 2022 – Nov 2026", place: "Stockholm", text: "A software studio that designed, built and ran software for companies." },
   { logo: "/logos/vornify.svg", company: "Vornify", title: "Founder", period: "Mar 2020 – Jul 2021", place: "Self-employed · Stockholm", text: "Founded an open-source backend for reusable CRUD and integrations, the foundation of today's Vornify AI." },
 ]
 
-export const stack: [string, string[]][] = [
-  ["Frontend", ["React", "Next.js", "TypeScript", "JavaScript"]],
-  ["Backend", ["Node.js", "Express", "C# / .NET", "ASP.NET Core", "GraphQL", "REST", "Python", "Django"]],
-  ["Data", ["PostgreSQL", "MongoDB", "DynamoDB", "Kafka", "Elasticsearch / ELK"]],
-  ["Cloud & Ops", ["AWS", "Lambda", "EC2", "Docker", "Kubernetes", "Grafana", "CI/CD"]],
-  ["AI", ["LLM integration", "AI product design", "AI-assisted engineering"]],
+export type Level = "Advanced" | "Intermediate";
+export const stack: [string, [string, Level][]][] = [
+  ["Frontend", [["React.js & Next.js", "Advanced"], ["TypeScript / JavaScript", "Advanced"], ["Tailwind CSS", "Advanced"], ["HTML5 & CSS3", "Advanced"], ["Responsive design", "Advanced"], ["Figma (UI/UX)", "Advanced"]]],
+  ["Backend", [["Node.js / Express.js", "Advanced"], ["Python / Django / FastAPI", "Advanced"], ["GraphQL", "Advanced"], ["REST API design", "Advanced"], ["C# / .NET Core", "Advanced"], ["Java / Spring Boot", "Intermediate"], ["Apache Kafka", "Intermediate"]]],
+  ["Cloud & data", [["AWS (Lambda, S3, RDS, EC2)", "Intermediate"], ["PostgreSQL / MongoDB", "Advanced"], ["Elasticsearch / OpenSearch", "Intermediate"], ["Firebase", "Advanced"], ["Grafana", "Advanced"], ["TensorFlow / OpenAI APIs", "Advanced"]]],
+  ["DevOps", [["Docker & Kubernetes", "Advanced"], ["CI/CD pipelines", "Advanced"], ["Git & GitHub", "Advanced"], ["JFrog", "Advanced"], ["SSH & PowerShell", "Advanced"]]],
+  ["Infrastructure as code", [["Terraform", "Intermediate"], ["AWS CloudFormation", "Intermediate"], ["Cloud resource provisioning", "Intermediate"], ["State management", "Advanced"]]],
+  ["AI & soft skills", [["AI/ML integration", "Advanced"], ["Prompt engineering", "Advanced"], ["Team leadership", "Advanced"], ["Agile / Scrum", "Advanced"], ["System architecture", "Advanced"], ["Client relations", "Advanced"]]],
 ];
 
-export type Education = { banner?: Banner; logo?: string; mark: string; school: string; what: string; period: string; text: string; meta: [string, string][]; story: Story };
+/* AI: how I use it, and why I can be trusted with it. */
+export type AiPage = { name: string; kicker: string; title: string; lead: string; stat?: [string, string]; label: string; points: [string, string][] };
+export const ai: AiPage[] = [
+  {
+    name: "Daily work",
+    kicker: "AI · In my daily work",
+    title: "AI is part of how I work, every day.",
+    lead: "I know Python, JavaScript and Java in depth. On that base, AI lets me get productive in a new language or stack fast. Put me in a C++ codebase I have never seen, and within a few weeks I am comfortable building and running it.",
+    label: "What that means for a team",
+    points: [
+      ["Three languages in depth", "Python, JavaScript and Java are where I think without help."],
+      ["Almost any stack", "The fundamentals carry over. AI closes the gap in syntax and tooling, so the stack is rarely what holds me back."],
+      ["Built on it, too", "Vornify AI is my own product, and my Computer Science studies at KTH focused on AI and machine learning."],
+    ],
+  },
+  {
+    name: "Judgment",
+    kicker: "AI · Judgment",
+    title: "AI writes fast. I decide what ships.",
+    lead: "At Telia I managed more than a billion data records from Swedish infrastructure. At that scale a small mistake is expensive, so I look at everything with a second eye, including what AI produces.",
+    stat: ["1B+", "data records managed at Telia"],
+    label: "What I check before it ships",
+    points: [
+      ["Does it hold?", "Under real load and real data, not only in the demo."],
+      ["Is it safe?", "I am trained in security protection and used to highly sensitive data."],
+      ["Can the team run it?", "Readable, tested and documented, so it does not depend on me."],
+    ],
+  },
+];
+
+
+export type Education = { banner?: Banner; facts?: string[]; logo?: string; mark: string; school: string; what: string; period: string; text: string; meta: [string, string][]; story: Story };
 
 export const education: Education[] = [
   {
@@ -254,6 +290,7 @@ export const education: Education[] = [
     school: "KTH Royal Institute of Technology",
     what: "Computer Science · AI & ML focus · Online",
     period: "2022 – 2025",
+    facts: ["3 years", "AI & ML focus", "Online"],
     text: "A three-year online Computer Science programme focused on AI, machine learning and software engineering, studied alongside my engineering role at Coredination.",
     meta: [["Field", "Computer Science"], ["Focus", "AI & ML software engineering"], ["Format", "Online · 3 years"], ["Period", "Sep 2022 – Jun 2025"]],
     story: {
@@ -278,80 +315,60 @@ export const education: Education[] = [
     school: "Swedish Defence University",
     what: "Security protection training",
     period: "2025",
-    text: "Foundational training in security protection: the responsibilities and principles of Sweden's security protection framework and total defence.",
+    facts: ["Certificate · 20 June 2025", "Försvarshögskolan & MSB"],
+    text: "Security protection training, taken so I could work with highly sensitive data at Telia, where the customers included Swedish government agencies.",
     meta: [["Course", "Security protection"], ["Completed", "20 June 2025"], ["Issued by", "Försvarshögskolan & MSB"]],
     story: {
       kicker: "Studies · Swedish Defence University",
       title: "Swedish Defence University",
-      body: ["Foundational training in security protection: the responsibilities and principles of Sweden's security protection framework and total defence."],
-      meta: [["Course", "Security protection"], ["Completed", "20 June 2025"], ["Issued by", "Försvarshögskolan & MSB"]],
-    },
-  },
-];
-
-/* How I work: the delivery approach I use (from my Clarge practice), in four steps. */
-export type Step = { n: string; name: string; title: string; text: string; output: string; me: string; team: string };
-export const method: Step[] = [
-  { n: "01", name: "Understand", title: "Get the context into one place.", text: "I work through the system, priorities and constraints with the people who know them. The codebase, key contacts, existing decisions and open questions go into a shared record, so knowledge gets reused instead of re-explained.", output: "System context and a first agreed scope", me: "System review, focused questions and a shared context record", team: "Business context, system access and key contacts" },
-  { n: "02", name: "Plan", title: "Give the work a practical rhythm.", text: "We agree the first milestone, responsibilities and review points. I prepare the technical direction, bring options to discussions and record decisions with owners and next steps. The business decides on priorities and trade-offs.", output: "A plan, a decision record and next actions", me: "Planning, technical recommendations and follow-through", team: "Priorities, business decisions and review times" },
-  { n: "03", name: "Build", title: "Keep the work visible as it develops.", text: "I do the engineering, review changes and prepare demos. What changed, what comes next and where input is needed stay visible, so questions and risks surface while there is still time to act on them.", output: "Working software and a clear progress record", me: "Engineering, checks, demos and progress updates", team: "Feedback, answers and acceptance of the work" },
-  { n: "04", name: "Continue", title: "Carry the context into the next step.", text: "I review the release against the agreed scope and keep the documentation current. Decisions, setup notes and open work stay accessible, whether I continue with the next priority or hand the work over.", output: "A documented release and a clear next step", me: "Release notes, current documentation and handover", team: "Outcome review and the next priority" },
-];
-
-/* Security: how I handle systems and information, and my training. */
-export type Security = { name: string; kicker: string; summary: string; logo?: string; image?: string; points?: [string, string][]; meta?: [string, string][]; link?: { label: string; href: string }; story: Story };
-export const security: Security[] = [
-  {
-    name: "Before I touch your systems",
-    kicker: "Security · How I work with access and information",
-    summary: "Access, information handling and ownership are agreed before I connect to anything, and reviewed as the work goes on.",
-    points: [
-      ["Access & environments", "Environments, accounts and device requirements are agreed first. I use only the access the work needs, with a clear process for reviewing and removing it."],
-      ["Information & tools", "We identify what information can be used, where it can be held and which tools are approved, including for meeting notes and any use of AI or automation."],
-      ["Ownership & handover", "Repositories, intellectual property, documentation and release responsibilities are recorded, so the team can understand and continue the work."],
-    ],
-    story: {
-      kicker: "Security · Working practice",
-      title: "Before I touch your systems",
       body: [
-        "I treat access to code and information as something to agree, not assume. Before connecting to a system, the environments, accounts, tools and boundaries for information are settled, and they stay part of the shared record as the work develops.",
+        "On 20 June 2025 I completed Grundläggande säkerhetsskyddsutbildning, the foundational security protection training from Försvarshögskolan and MSB.",
+        "I took it to be able to work with highly sensitive data at Telia. Our customers there included Swedish government agencies such as Polismyndigheten, Skatteverket and Migrationsverket.",
       ],
+      figure: {
+        src: "/credentials/security-protection-training.webp",
+        alt: "Participation certificate: Grundläggande säkerhetsskyddsutbildning, Elias Luzwehimana, 20 June 2025, Försvarshögskolan and MSB",
+        label: "The certificate",
+        title: "Grundläggande säkerhetsskyddsutbildning",
+        text: "Participation certificate issued to Elias Luzwehimana on 20 June 2025 by Försvarshögskolan (Swedish Defence University) and MSB.",
+        href: "/credentials/security-protection-training.pdf",
+      },
       sections: [
-        { title: "Access & environments", items: ["Environments, accounts and device requirements agreed before connecting", "Only the access the work needs", "A clear process for reviewing and removing access"] },
-        { title: "Information & tools", items: ["What information can be used and where it can be held", "Which tools are approved, including AI and automation", "Meeting notes and records follow the same boundaries"] },
-        { title: "Ownership & handover", items: ["Repositories and intellectual property recorded up front", "Documentation develops alongside the code", "The team can understand and continue the work"] },
-      ],
-      tags: ["Least-privilege access", "Approved tooling", "Documented handover"],
-    },
-  },
-  {
-    name: "Security protection training",
-    kicker: "Security · Försvarshögskolan & MSB",
-    summary: "Completed Grundläggande säkerhetsskyddsutbildning on 20 June 2025: security protection within Sweden's crisis preparedness and total defence.",
-    logo: "/logos/fhs.svg",
-    image: "/credentials/security-protection-training.webp",
-    meta: [["Course", "Grundläggande säkerhetsskyddsutbildning"], ["Completed", "20 June 2025"], ["Issued by", "Försvarshögskolan & MSB"]],
-    link: { label: "Full-size PDF", href: "/credentials/security-protection-training.pdf" },
-    story: {
-      kicker: "Security · Training",
-      title: "Security protection training",
-      body: [
-        "On 20 June 2025 I completed Grundläggande säkerhetsskyddsutbildning, the introductory security protection training for people with assignments within Sweden's crisis preparedness and total defence. The participation certificate bears the names of Försvarshögskolan (Swedish Defence University) and MSB.",
-      ],
-      sections: [
+        { title: "Why I took it", items: ["To work with highly sensitive data at Telia", "Government customers such as Polismyndigheten, Skatteverket and Migrationsverket", "Completed the same month I started at Telia"] },
         { title: "What the training covers", items: ["The security protection requirements that apply", "Personal responsibility in the work for Sweden's security", "Responsibility in security protection work", "Practical ways to contribute to and maintain security protection"] },
       ],
-      meta: [["Completed", "20 June 2025"], ["Issued by", "Försvarshögskolan & MSB"], ["Format", "Participation certificate"]],
-      link: { label: "View certificate (PDF)", href: "/credentials/security-protection-training.pdf" },
+      meta: [["Course", "Security protection"], ["Completed", "20 June 2025"], ["Issued by", "Försvarshögskolan & MSB"], ["Taken for", "Telia"]],
     },
   },
 ];
+
+/* How I work with a team: from understanding the problem to getting it shipped. */
+export type Step = { n: string; name: string; title: string; text: string; output: string; me: string; team: string };
+export const method: Step[] = [
+  { n: "01", name: "Understand", title: "Start with the problem, not the ticket.", text: "I ask a lot of questions. Before I write code I talk to the people who know the system and its users, and write down what we know, what we don't and what a good result looks like.", output: "A shared picture of the problem", me: "Questions, a read of the codebase and a written summary", team: "Context, history and the right people to talk to" },
+  { n: "02", name: "Decide", title: "Decide in the open.", text: "I bring options with their trade-offs, say which one I would pick and why, and then listen. I test each option against load, security and who will maintain it. Once we decide, it is written down with an owner.", output: "A decision everyone can explain", me: "Options, a recommendation and the trade-offs", team: "Priorities, challenge and the final call" },
+  { n: "03", name: "Build", title: "Keep the work visible.", text: "I ship in small steps, show working software early and say so when something is off. Nobody should have to ask where things stand.", output: "Working software, shown early", me: "Engineering, reviews and demos", team: "Feedback while it is still cheap to change" },
+  { n: "04", name: "Ship", title: "Finish properly.", text: "Done means in production, monitored and documented, so the next person can pick it up without me in the room.", output: "A release the team can run", me: "Release, monitoring and documentation", team: "A review of the outcome and the next priority" },
+];
+
+/* About me: what drives me, and what I do outside work. */
+export const about = {
+  kicker: "About me",
+  title: "Curious, and at my best in a team.",
+  lead: "Curiosity is what drives me. I like being part of a team that solves problems together, where what I say matters and I listen just as closely to everyone else.",
+  label: "Outside work",
+  points: [
+    ["Running", "With my running club, around Djurgården."],
+    ["Cycling", "Out on the bike when the weather is clear."],
+    ["Tech events", "I go to the tech events I find interesting."],
+  ] as [string, string][],
+};
 
 /* The short version, for the person deciding. */
 export const pitch: [string, string][] = [
   ["5+ years in production", "Telecom, construction tech and B2B SaaS at Symetri, Telia and Coredination, including client work for Scania."],
   ["Founder experience", "I built and run Vornify AI and founded Clarge, so I own work from the first idea to production."],
-  ["Security-trained", "Security protection training from Försvarshögskolan and MSB, and a clear practice for access and information."],
+  ["Security-trained", "Security protection training from Försvarshögskolan and MSB, taken for work with highly sensitive data at Telia."],
   ["Available now", "Ready to start immediately. Stockholm: hybrid, on-site or remote."],
 ];
 
@@ -386,7 +403,7 @@ export const nextRoles: NextRole[] = [
     why: "I've started things from nothing twice. I know the pace, the trade-offs and the responsibility of an early team, and I want to bring that to a startup that is moving fast.",
     proof: [
       ["Vornify", "From open-source backend to a live AI product"],
-      ["Clarge", "Founded and run a software studio since 2022"],
+      ["Clarge", "Founded and ran a software studio, 2022 to 2026"],
       ["Scrapathon", "24 hours from idea to pitch with Antler × SSE Business Lab"],
     ],
     fit: "Early, fast-growing teams that ship weekly and talk to users.",

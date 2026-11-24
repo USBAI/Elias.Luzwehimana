@@ -1,21 +1,23 @@
 "use client";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { education, experience, method, nextRoles, nextTeam, person, pitch, projects, security, slides, stack, work, type Work } from "@/lib/content";
+import { about, ai, education, experience, method, nextRoles, nextTeam, person, pitch, projects, slides, stack, work, type Work } from "@/lib/content";
 import { useStory } from "./story";
 import { Logo } from "./logo";
 
 
-type ChapterId = "hero" | "work" | "education" | "projects" | "method" | "security" | "experience" | "next" | "stack" | "contact";
+const STACK_PAGES = [stack.slice(0, 3), stack.slice(3)];
+type ChapterId = "hero" | "experience" | "work" | "education" | "projects" | "stack" | "ai" | "method" | "about" | "next" | "contact";
 const CHAPTERS: { id: ChapterId; label: string; count: number }[] = [
   { id: "hero", label: "Start", count: 1 },
+  { id: "experience", label: "Experience", count: 1 },
   { id: "work", label: "Work", count: work.length },
   { id: "education", label: "Studies", count: education.length },
   { id: "projects", label: "Projects", count: projects.length },
+  { id: "stack", label: "Skills & stack", count: STACK_PAGES.length },
+  { id: "ai", label: "AI", count: ai.length },
   { id: "method", label: "How I work", count: method.length },
-  { id: "security", label: "Security", count: security.length },
-  { id: "experience", label: "Experience", count: 1 },
+  { id: "about", label: "About me", count: 1 },
   { id: "next", label: "What's next", count: nextRoles.length + 1 },
-  { id: "stack", label: "Stack", count: 1 },
   { id: "contact", label: "Contact", count: 1 },
 ];
 const STEPS = CHAPTERS.flatMap((c, ci) => Array.from({ length: c.count }, (_, k) => ({ ci, k })));
@@ -143,7 +145,7 @@ const Hero = memo(function Hero({ active, onStart }: { active: boolean; onStart:
           </button>
         ))}
       </div>
-      <button className="hero-start" onClick={onStart}>See my work <span aria-hidden>↓</span></button>
+      <button className="hero-start" onClick={onStart}>See my experience <span aria-hidden>↓</span></button>
     </div>
   );
 });
@@ -227,6 +229,7 @@ const EducationChapter = memo(function EducationChapter({ k, d }: { k: number; d
             <p className="eyebrow">{e.what} · {e.period}</p>
             <h2>{e.school}</h2>
             <p className="lead">{e.text}</p>
+            {e.facts && <ul className="facts">{e.facts.map((f) => <li key={f}>{f}</li>)}</ul>}
             <div className="item-actions">
               <button className="btn btn-dark" tabIndex={j === k ? 0 : -1} onClick={() => open(`study-${e.school}`)}>Read the full story <span aria-hidden>→</span></button>
             </div>
@@ -253,11 +256,11 @@ const MethodChapter = memo(function MethodChapter({ k, d }: { k: number; d: numb
             <p className="lead">{m.text}</p>
           </div>
           <aside className="item-card method-card">
-            <p className="card-label">You get</p>
+            <p className="card-label">The result</p>
             <p className="method-output">{m.output}</p>
             <dl>
-              <div><dt>I bring</dt><dd>{m.me}</dd></div>
-              <div><dt>The team brings</dt><dd>{m.team}</dd></div>
+              <div><dt>My part</dt><dd>{m.me}</dd></div>
+              <div><dt>With the team</dt><dd>{m.team}</dd></div>
             </dl>
           </aside>
         </article>
@@ -266,34 +269,41 @@ const MethodChapter = memo(function MethodChapter({ k, d }: { k: number; d: numb
   );
 });
 
-const SecurityChapter = memo(function SecurityChapter({ k, d }: { k: number; d: number }) {
-  const { open } = useStory();
+const AboutChapter = memo(function AboutChapter() {
+  return (
+    <article className="item item-page item-about">
+      <div className="item-main">
+        <p className="eyebrow">{about.kicker}</p>
+        <h2>{about.title}</h2>
+        <p className="lead">{about.lead}</p>
+      </div>
+      <aside className="item-card points-card">
+        <p className="card-label">{about.label}</p>
+        {about.points.map(([t, v]) => <div key={t}><h4>{t}</h4><p>{v}</p></div>)}
+      </aside>
+    </article>
+  );
+});
+
+const AiChapter = memo(function AiChapter({ k, d }: { k: number; d: number }) {
   return (
     <>
-      {security.map((x, j) => (
-        <article key={x.name} className="item item-page" style={itemStyle(j, k, d)} aria-hidden={j !== k} inert={j !== k}>
+      {ai.map((x, j) => (
+        <article key={x.name} className="item item-page item-ai" style={itemStyle(j, k, d)} aria-hidden={j !== k} inert={j !== k}>
           <div className="splash" aria-hidden><i /><i /><i /></div>
           <div className="item-main">
-            <Logo src={x.logo ?? "/logos/shield.svg"} name={x.logo ? "Försvarshögskolan" : "Security"} />
+            <p className="method-steps">
+              {ai.map((y, n) => <span key={y.name} data-active={n === j} data-done={n < j}>{y.name}</span>)}
+            </p>
             <p className="eyebrow">{x.kicker}</p>
-            <h2>{x.name}</h2>
-            <p className="lead">{x.summary}</p>
-            <div className="item-actions">
-              <button className="btn btn-dark" tabIndex={j === k ? 0 : -1} onClick={() => open(`security-${x.name}`)}>Read more</button>
-              {x.link && <a className="text-link" tabIndex={j === k ? 0 : -1} href={x.link.href} target="_blank" rel="noreferrer">{x.link.label} ↗</a>}
-            </div>
+            <h2>{x.title}</h2>
+            <p className="lead">{x.lead}</p>
           </div>
-          {x.points ? (
-            <aside className="item-card points-card">
-              {x.points.map(([t, v]) => <div key={t}><h4>{t}</h4><p>{v}</p></div>)}
-            </aside>
-          ) : x.image ? (
-            <button className="cert" tabIndex={j === k ? 0 : -1} onClick={() => open(`security-${x.name}`)} aria-label="Open the security protection certificate">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={x.image} alt="Participation certificate: Grundläggande säkerhetsskyddsutbildning, Elias Luzwehimana, 20 June 2025, Försvarshögskolan and MSB" />
-              <span className="cert-tag">Participation certificate · 20 June 2025</span>
-            </button>
-          ) : <MetaCard rows={x.meta} />}
+          <aside className="item-card points-card">
+            {x.stat && <p className="stat"><b>{x.stat[0]}</b><span>{x.stat[1]}</span></p>}
+            <p className="card-label">{x.label}</p>
+            {x.points.map(([t, v]) => <div key={t}><h4>{t}</h4><p>{v}</p></div>)}
+          </aside>
         </article>
       ))}
     </>
@@ -301,35 +311,32 @@ const SecurityChapter = memo(function SecurityChapter({ k, d }: { k: number; d: 
 });
 
 const NextChapter = memo(function NextChapter({ k, d }: { k: number; d: number }) {
+  const total = nextRoles.length;
   return (
     <>
       {nextRoles.map((r, j) => (
         <article key={r.role} className="item item-page item-next" style={itemStyle(j, k, d)} aria-hidden={j !== k} inert={j !== k}>
-          <div className="splash" aria-hidden><i /><i /><i /></div>
           <div className="item-main">
-            <p className="method-steps">
-              {nextRoles.map((x, n) => <span key={x.role} data-active={n === j} data-done={n < j}>{x.role}</span>)}
-            </p>
-            <p className="eyebrow">What I&apos;m looking for next</p>
+            <p className="next-kicker"><b>{pad(j + 1)} / {pad(total)}</b>What I&apos;m looking for next</p>
             <h2>{r.role}</h2>
-            <p className="next-why"><b>Why</b>{r.why}</p>
-            <p className="next-fit">{r.fit}</p>
+            <p className="next-why">{r.why}</p>
+            <p className="next-fit"><b>Best fit</b>{r.fit}</p>
           </div>
-          <aside className="item-card proof-card">
-            <p className="card-label">The evidence</p>
-            {r.proof.map(([where, what]) => <div key={where}><h4>{where}</h4><p>{what}</p></div>)}
+          <aside className="next-proof">
+            <p className="card-label">Why you can believe it</p>
+            {r.proof.map(([where, what], n) => <div key={where}><i>{pad(n + 1)}</i><h4>{where}</h4><p>{what}</p></div>)}
           </aside>
         </article>
       ))}
-      <article className="item item-page item-next" style={itemStyle(nextRoles.length, k, d)} aria-hidden={k !== nextRoles.length} inert={k !== nextRoles.length}>
-        <div className="splash" aria-hidden><i /><i /><i /></div>
+      <article className="item item-page item-next" style={itemStyle(total, k, d)} aria-hidden={k !== total} inert={k !== total}>
         <div className="item-main">
-          <p className="eyebrow">What I&apos;m looking for next</p>
+          <p className="next-kicker"><b>In short</b>What I&apos;m looking for next</p>
           <h2>{nextTeam.title}</h2>
-          <p className="lead">Senior Engineer, Product Engineer or Founding Engineer, in a team where engineers own outcomes.</p>
+          <p className="next-why">Senior Engineer, Product Engineer or Founding Engineer, in a team where engineers own outcomes.</p>
         </div>
-        <aside className="item-card points-card">
-          {nextTeam.points.map(([t, v]) => <div key={t}><h4>{t}</h4><p>{v}</p></div>)}
+        <aside className="next-proof">
+          <p className="card-label">Where</p>
+          {nextTeam.points.map(([t, v], n) => <div key={t}><i>{pad(n + 1)}</i><h4>{t}</h4><p>{v}</p></div>)}
         </aside>
       </article>
     </>
@@ -339,7 +346,10 @@ const NextChapter = memo(function NextChapter({ k, d }: { k: number; d: number }
 const ExperienceChapter = memo(function ExperienceChapter() {
   return (
     <article className="item item-wide" data-state="current">
-      <h2 className="chapter-title">Experience</h2>
+      <div className="chapter-head">
+        <h2 className="chapter-title">Experience</h2>
+        <p>The short version. Keep scrolling for the detail behind each role.</p>
+      </div>
       <ol className="roles">
         {experience.map((r) => (
           <li key={r.company + r.title}>
@@ -353,19 +363,29 @@ const ExperienceChapter = memo(function ExperienceChapter() {
   );
 });
 
-const StackChapter = memo(function StackChapter() {
+const StackChapter = memo(function StackChapter({ k, d }: { k: number; d: number }) {
   return (
-    <article className="item item-wide" data-state="current">
-      <h2 className="chapter-title">Stack</h2>
-      <div className="stack-groups">
-        {stack.map(([group, items]) => (
-          <div key={group} className="stack-group">
-            <h4>{group}</h4>
-            <ul>{items.map((i) => <li key={i}>{i}</li>)}</ul>
+    <>
+      {STACK_PAGES.map((groups, j) => (
+        <article key={j} className="item item-page item-stack" style={itemStyle(j, k, d)} aria-hidden={j !== k} inert={j !== k}>
+          <div className="splash" aria-hidden><i /><i /><i /></div>
+          <div className="chapter-head">
+            <h2 className="chapter-title">Skills &amp; stack</h2>
+            <p className="legend"><span data-level="Advanced">Advanced</span><span data-level="Intermediate">Intermediate</span></p>
           </div>
-        ))}
-      </div>
-    </article>
+          <div className="skill-grid">
+            {groups.map(([group, items]) => (
+              <section key={group} className="skill-card">
+                <h3>{group}</h3>
+                <ul>
+                  {items.map(([name, level]) => <li key={name}><span>{name}</span><em data-level={level}>{level}</em></li>)}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </article>
+      ))}
+    </>
   );
 });
 
@@ -415,7 +435,7 @@ export function Journey() {
     const LOCK = 620;       // ms: one page per gesture
     const GAP = 130;        // ms of silence that ends a trackpad gesture
     let acc = 0, lastT = 0, lockUntil = 0, armed = true, low = 0;
-    let touchY = 0, touchSum = 0, touchTurned = false;
+    let touchY = 0, touchX = 0, touchSum = 0, sideways = 0, touchTurned = false;
     const turn = (dir: number) => {
       const n = stepRef.current + dir;
       if (n < 0 || n >= STEPS.length) return;
@@ -444,12 +464,14 @@ export function Journey() {
     };
     let touchTarget: EventTarget | null = null;
     let scrolledInside = false;
-    const onStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; touchTarget = e.target; touchSum = 0; touchTurned = false; scrolledInside = false; };
+    const onStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; touchX = e.touches[0].clientX; touchTarget = e.target; touchSum = 0; sideways = 0; touchTurned = false; scrolledInside = false; };
     const onMove = (e: TouchEvent) => {
       if (blocked.current || touchTurned) return;
       const y = e.touches[0].clientY, dy = touchY - y;
       touchY = y;
-      if (!dy) return;
+      // A sideways swipe (the skills cards, the hero photos) never turns the page.
+      const x = e.touches[0].clientX; sideways += Math.abs(touchX - x); touchX = x;
+      if (!dy || sideways > Math.abs(touchSum + dy) * 1.2 + 10) return;
       // Long pages scroll natively. A swipe that scrolled a page never also turns it: the next one does.
       if (scrolledInside || canScroll(touchTarget, dy)) { scrolledInside = true; return; }
       touchSum += dy;
@@ -484,7 +506,7 @@ export function Journey() {
     if (el) el.scrollTop = forward ? 0 : el.scrollHeight;
   }, [step]);
 
-  const startWork = useCallback(() => setStep(1), []);
+  const startWork = useCallback(() => { stepRef.current = 1; setStep(1); }, []);
 
   const itemIndex = (i: number) => (i === ci ? k : i < ci ? CHAPTERS[i].count - 1 : 0);
 
@@ -498,10 +520,11 @@ export function Journey() {
           {c.id === "projects" && <WorkChapter k={itemIndex(i)} d={0} items={projects} prefix="project" />}
           {c.id === "education" && <EducationChapter k={itemIndex(i)} d={0} />}
           {c.id === "method" && <MethodChapter k={itemIndex(i)} d={0} />}
-          {c.id === "security" && <SecurityChapter k={itemIndex(i)} d={0} />}
+          {c.id === "ai" && <AiChapter k={itemIndex(i)} d={0} />}
+          {c.id === "about" && <AboutChapter />}
           {c.id === "experience" && <ExperienceChapter />}
           {c.id === "next" && <NextChapter k={itemIndex(i)} d={0} />}
-          {c.id === "stack" && <StackChapter />}
+          {c.id === "stack" && <StackChapter k={itemIndex(i)} d={0} />}
           {c.id === "contact" && <ContactChapter />}
         </section>
       ))}
