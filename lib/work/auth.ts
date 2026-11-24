@@ -29,6 +29,14 @@ export async function endSession() {
   (await cookies()).delete(COOKIE);
 }
 
+/* Scripts and assistants can use the same API with "Authorization: Bearer <WORK_API_KEY>".
+   Off unless WORK_API_KEY is set (24+ characters). */
+function hasApiKey(req?: Request) {
+  const key = process.env.WORK_API_KEY, given = req?.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  return !!key && key.length >= 24 && !!given && same(given, key);
+}
+export const isAllowed = async (req: Request) => hasApiKey(req) || (await isSignedIn());
+
 export async function isSignedIn() {
   const raw = (await cookies()).get(COOKIE)?.value;
   if (!raw) return false;
