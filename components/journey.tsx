@@ -84,6 +84,8 @@ function PillBar({ tone, showMenu, current, onJump }: { tone: "dark" | "light"; 
         <a className="contact-row" href={person.phoneHref}><span>Phone</span><b>{person.phone}</b></a>
         <a className="contact-row" href={person.linkedin} target="_blank" rel="noreferrer"><span>LinkedIn</span><b>Profile ↗</b></a>
         <a className="contact-row" href={person.github} target="_blank" rel="noreferrer"><span>GitHub</span><b>USBAI ↗</b></a>
+        <a className="contact-row" href={person.cv} target="_blank" rel="noreferrer"><span>CV</span><b>PDF ↗</b></a>
+        <a className="contact-row" href={person.coverLetter} target="_blank" rel="noreferrer"><span>Cover letter</span><b>PDF ↗</b></a>
       </div>
     </div>
   );

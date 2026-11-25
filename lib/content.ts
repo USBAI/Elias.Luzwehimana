@@ -22,6 +22,8 @@ export const person = {
   summary:
     "I build and run production software. Most recently platform APIs at Symetri and data mediation at Telia, alongside Vornify AI, my own product.",
   availability: "Open to new roles",
+  cv: "/cv/Elias-Luzwehimana-CV.pdf",
+  coverLetter: "/cv/Elias-Luzwehimana-Cover-Letter.pdf",
 };
 
 export type Slide = { src: string; alt: string; position?: string; mobilePosition?: string; logos?: { src: string; name: string }[]; label: string; caption: string; story: Story };
