@@ -1,5 +1,5 @@
-/* Three collections: roles to apply for, people contacted, and the platforms used to find roles. */
-export const COLLECTIONS = ["jobs", "contacts", "platforms"] as const;
+/* Four collections: roles to apply for, people contacted, the platforms used to find roles, and interview prep (one per role). */
+export const COLLECTIONS = ["jobs", "contacts", "platforms", "prep"] as const;
 export type Col = (typeof COLLECTIONS)[number];
 export const isCol = (v: string): v is Col => (COLLECTIONS as readonly string[]).includes(v);
 
@@ -23,6 +23,21 @@ export type PlatformStatus = (typeof PLATFORM_STATUSES)[number];
 export const PLATFORM_LABEL: Record<PlatformStatus, string> = { todo: "No account yet", account: "Account created", ready: "Profile complete", active: "Checking weekly" };
 export type PlatformInput = { name: string; url: string; focus: string; why: string; status: PlatformStatus; notes: string };
 export type Platform = Base & PlatformInput;
+
+/* Interview prep: one document per role, linked by jobId. Each section is free text. */
+export const PREP_SECTIONS = [
+  { key: "company", label: "The company", hint: "What they build, who pays for it, funding, recent news, tech stack." },
+  { key: "role", label: "The role", hint: "What the ad asks for, and where your experience matches it." },
+  { key: "people", label: "Who you meet", hint: "Names, titles, background, what they care about." },
+  { key: "pitch", label: "Your pitch", hint: "Two minutes: who you are, why this company, why now." },
+  { key: "questions", label: "Likely questions", hint: "Write “Q: the question”, then your answer as bullets." },
+  { key: "ask", label: "Questions to ask them", hint: "Five good ones. Team, product, how success is measured." },
+  { key: "logistics", label: "Logistics", hint: "Meeting link, address, who to call, what to have open." },
+  { key: "after", label: "After the interview", hint: "What was said, what went well, the follow-up." },
+] as const;
+export type PrepKey = (typeof PREP_SECTIONS)[number]["key"];
+export type PrepInput = { jobId: string; when: string; format: string; checklist: string } & Record<PrepKey, string>;
+export type Prep = Base & PrepInput;
 
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const date = (v: unknown) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : "");
@@ -49,6 +64,13 @@ const SHAPES: Record<Col, { fields: Record<string, Field>; required: string[] }>
     required: ["name"],
     fields: {
       name: (v) => text(v, 120), url: link, focus: (v) => text(v, 120), why: (v) => text(v, 400), status: (v) => oneOf(PLATFORM_STATUSES, v, "todo"), notes: (v) => text(v, 3000),
+    },
+  },
+  prep: {
+    required: ["jobId"],
+    fields: {
+      jobId: (v) => text(v, 40), when: (v) => text(v, 120), format: (v) => text(v, 160), checklist: (v) => text(v, 4000),
+      ...Object.fromEntries(PREP_SECTIONS.map((s) => [s.key, (v: unknown) => text(v, 20000)])),
     },
   },
 };

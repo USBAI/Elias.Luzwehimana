@@ -53,3 +53,24 @@ export async function remove(col: Col, id: string): Promise<boolean> {
   const _id = oid(id); if (!_id) return false;
   return (await c.deleteOne({ _id })).deletedCount === 1;
 }
+
+export async function find(col: Col, id: string): Promise<Item | null> {
+  const c = await collection(col);
+  if (!c) return memory(col).find((j) => j.id === id) ?? null;
+  const _id = oid(id); if (!_id) return null;
+  const doc = await c.findOne({ _id });
+  return doc ? out(doc) : null;
+}
+
+/* One document per value of `key` (interview prep is one per role): update it, or create it the first time. */
+export async function findBy(col: Col, key: string, value: string): Promise<Item | null> {
+  const c = await collection(col);
+  if (!c) return memory(col).find((j) => j[key] === value) ?? null;
+  const doc = await c.findOne({ [key]: value });
+  return doc ? out(doc) : null;
+}
+export async function upsertBy(col: Col, key: string, value: string, patch: Record<string, string>): Promise<Item> {
+  const existing = await findBy(col, key, value);
+  if (existing) return (await update(col, existing.id, patch)) ?? existing;
+  return add(col, { ...patch, [key]: value });
+}

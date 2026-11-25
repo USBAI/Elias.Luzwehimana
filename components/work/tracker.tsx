@@ -174,7 +174,7 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
                     const link = view === "jobs" ? j.url : j.handle;
                     return (
                       <article key={j.id} className="w-card" data-closed={s === closed} draggable onDragStart={() => { dragId.current = j.id; }}>
-                        <button className="w-card-main" onClick={() => setEditing(j)}>
+                        <Main prep={view === "jobs" && s === "interview" ? `/work/interview/${j.id}` : ""} onEdit={() => setEditing(j)}>
                           {view === "jobs" ? (
                             <><span className="w-company">{j.company}</span><span className="w-role">{j.role}</span>
                               {(j.location || j.source) && <span className="w-meta">{[j.location, j.source].filter(Boolean).join(" · ")}</span>}</>
@@ -184,12 +184,13 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
                           )}
                           {(j.nextStep || j.nextDate) && <span className="w-next" data-late={isDue(j, closed)}>{j.nextDate && <b>{nice(j.nextDate)}</b>}{j.nextStep || "Follow up"}</span>}
                           {cfg.doneKey && j[cfg.doneKey] && <span className="w-meta">{view === "jobs" ? "Applied" : "Sent"} {nice(j[cfg.doneKey])}</span>}
-                        </button>
+                          {view === "jobs" && s === "interview" && <span className="w-prep">Prepare →</span>}
+                        </Main>
                         <div className="w-card-foot">
                           {link ? <a href={href(link)} target="_blank" rel="noreferrer">{link.includes("@") && !link.startsWith("http") ? link : `${host(link)} ↗`}</a> : <span />}
                           {n === 0 && cfg.quick
                             ? <button className="w-mini" onClick={() => move(j, cfg.quick![0])}>{cfg.quick[1]}</button>
-                            : <select aria-label="Status" value={j.status} onChange={(e) => move(j, e.target.value)}>{cfg.statuses.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>}
+                            : <span className="w-right">{view === "jobs" && s === "interview" && <button className="w-mini w-mini-ghost" onClick={() => setEditing(j)}>Edit</button>}<select aria-label="Status" value={j.status} onChange={(e) => move(j, e.target.value)}>{cfg.statuses.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></span>}
                         </div>
                       </article>
                     );
@@ -204,6 +205,11 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
       {editing && <Editor key={view} noun={cfg.noun} fields={cfg.fields} item={editing === "new" ? null : editing} onClose={() => setEditing(null)} onSave={save} onRemove={remove} />}
     </main>
   );
+}
+
+/* A card opens the editor, except interviews: those open the prep page for that role. */
+function Main({ prep, onEdit, children }: { prep: string; onEdit: () => void; children: React.ReactNode }) {
+  return prep ? <a className="w-card-main" href={prep}>{children}</a> : <button className="w-card-main" onClick={onEdit}>{children}</button>;
 }
 
 function Editor({ noun, fields, item, onClose, onSave, onRemove }: { noun: string; fields: Field[]; item: Item | null; onClose: () => void; onSave: (input: Record<string, string>, id?: string) => Promise<void>; onRemove: (id: string) => Promise<void> }) {
