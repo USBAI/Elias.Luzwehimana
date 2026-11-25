@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { entry, suggestionsFor } from "@/lib/entries";
 import { Logo } from "./logo";
+import { SafeImg } from "./safe-img";
 
 const Ctx = createContext<{ open: (id: string) => void; isOpen: boolean }>({ open: () => {}, isOpen: false });
 export const useStory = () => useContext(Ctx);
@@ -83,7 +84,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
                 {e.image && (
                   <figure className="room-hero-image">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={e.image} alt="" style={{ objectPosition: e.position }} />
+                    <SafeImg src={e.image} alt="" style={{ objectPosition: e.position }} />
                     {e.credit && <figcaption>{e.credit}</figcaption>}
                   </figure>
                 )}
@@ -106,7 +107,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
                 <section className="room-figure">
                   <a className="room-figure-img" href={s.figure.href ?? s.figure.src} target="_blank" rel="noreferrer">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={s.figure.src} alt={s.figure.alt} />
+                    <SafeImg src={s.figure.src} alt={s.figure.alt} />
                   </a>
                   <div className="room-figure-copy">
                     <p className="room-side-label">{s.figure.label}</p>
@@ -137,7 +138,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
                     <button key={g.id} className="suggest-card" onClick={() => go(g.id)}>
                       {g.image
                         // eslint-disable-next-line @next/next/no-img-element
-                        ? <img className="suggest-img" src={g.image} alt="" style={{ objectPosition: g.position }} />
+                        ? <SafeImg className="suggest-img" src={g.image} alt="" style={{ objectPosition: g.position }} />
                         : <Logo src={g.logo} mark={g.mark} name={g.story.title} size="sm" />}
                       <span className="suggest-group">{g.group}</span>
                       <span className="suggest-title">{g.story.title}</span>

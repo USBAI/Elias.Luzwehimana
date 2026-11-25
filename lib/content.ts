@@ -95,7 +95,7 @@ export const work: Work[] = [
     name: "User information platform",
     role: "Senior Software Engineer",
     company: "Symetri Europe",
-    logo: "/logos/symetri-full.svg",
+    logo: "/logos/symetri-icon.svg",
     type: "Symetri Europe · Aug – Nov 2026",
     summary: "Owned the internal system that manages user information, working directly with the Head of Technology and the CISO.",
     facts: ["Security-critical data", "Worked with CISO", "C# · .NET"],
@@ -148,7 +148,7 @@ export const work: Work[] = [
     name: "Field Service SaaS",
     role: "Software Engineer",
     company: "Coredination",
-    logo: "/logos/coredination.svg",
+    logo: "/logos/coredination-icon.svg",
     partner: { logo: "/logos/scania.svg", name: "Scania", note: "Client" },
     type: "Coredination · Oct 2021 – May 2025",
     summary: "Built the cloud platform that runs field work for transport and rental companies, from the work order to the invoice, plus backend integrations for Scania.",
@@ -232,9 +232,9 @@ export const projects: Work[] = [
 export type Role = { logo?: string; mark?: string; company: string; title: string; period: string; place: string; text: string; story?: Story };
 
 export const experience: Role[] = [
-  { logo: "/logos/symetri-full.svg", company: "Symetri Europe", title: "Senior Software Engineer", period: "Aug 2026 – Nov 2026", place: "Full-time · Solna · Hybrid", text: "Owned the internal user-information system and its codebase, working with the Head of Technology and the CISO." },
+  { logo: "/logos/symetri-icon.svg", company: "Symetri Europe", title: "Senior Software Engineer", period: "Aug 2026 – Nov 2026", place: "Full-time · Solna · Hybrid", text: "Owned the internal user-information system and its codebase, working with the Head of Technology and the CISO." },
   { logo: "/logos/telia.svg", company: "Telia", title: "Lead Software Engineer", period: "Jun 2025 – Aug 2026", place: "Full-time · Solna · On-site", text: "Led engineering on customer-facing portals and services in Broadband Data Mediation, moving them to scalable, containerised deployments." },
-  { logo: "/logos/coredination.svg", company: "Coredination", title: "Software Engineer", period: "Oct 2021 – May 2025", place: "Contract · Sundbyberg · On-site", text: "B2B field service SaaS on serverless AWS, React and GraphQL, including five months of backend integrations for Scania." },
+  { logo: "/logos/coredination-icon.svg", company: "Coredination", title: "Software Engineer", period: "Oct 2021 – May 2025", place: "Contract · Sundbyberg · On-site", text: "B2B field service SaaS on serverless AWS, React and GraphQL, including five months of backend integrations for Scania." },
   { logo: "/logos/clarge.svg", company: "Clarge", title: "Founder", period: "Jul 2022 – Nov 2026", place: "Stockholm", text: "A software studio that designed, built and ran software for companies." },
   { logo: "/logos/vornify.svg", company: "Vornify", title: "Founder", period: "Mar 2020 – Jul 2021", place: "Self-employed · Stockholm", text: "Founded an open-source backend for reusable CRUD and integrations, the foundation of today's Vornify AI." },
 ]

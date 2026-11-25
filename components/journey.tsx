@@ -3,6 +3,7 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { about, ai, education, experience, method, nextRoles, nextTeam, person, pitch, projects, slides, stack, work, type Work } from "@/lib/content";
 import { useStory } from "./story";
 import { Logo } from "./logo";
+import { SafeImg } from "./safe-img";
 
 
 const STACK_PAGES = [stack.slice(0, 3), stack.slice(3)];
@@ -122,7 +123,7 @@ const Hero = memo(function Hero({ active, onStart }: { active: boolean; onStart:
         {slides.map((s, i) => (
           <div className="hero-frame" key={s.src} data-active={i === index} aria-hidden={i !== index}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt={s.alt} draggable={false} style={{ "--pos": s.position ?? "50% 50%", "--pos-m": s.mobilePosition ?? s.position ?? "50% 50%" } as React.CSSProperties} fetchPriority={i === 0 ? "high" : "low"} />
+            <SafeImg src={s.src} alt={s.alt} draggable={false} style={{ "--pos": s.position ?? "50% 50%", "--pos-m": s.mobilePosition ?? s.position ?? "50% 50%" } as React.CSSProperties} fetchPriority={i === 0 ? "high" : "low"} />
           </div>
         ))}
       </div>
@@ -169,7 +170,7 @@ function ProfileHead({ banner, logo, name, mark, partner }: { banner?: { src: st
       <figure className="banner">
         {banner && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={banner.src} alt="" style={{ objectPosition: banner.position }} draggable={false} />
+          <SafeImg src={banner.src} alt="" style={{ objectPosition: banner.position }} draggable={false} />
         )}
         {banner?.credit && <figcaption>{banner.credit}</figcaption>}
       </figure>
