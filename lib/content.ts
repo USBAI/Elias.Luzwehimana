@@ -122,7 +122,7 @@ export const work: Work[] = [
     name: "Broadband Data Mediation",
     role: "Lead Software Engineer",
     company: "Telia",
-    logo: "/logos/telia.svg",
+    logo: "/logos/telia-icon.png",
     type: "Telia · Jun 2025 – Aug 2026",
     summary: "Led engineering on the portals and services behind Telia's broadband data mediation: where raw network usage becomes data the business can bill and act on.",
     facts: ["Lead engineer", "Telecom scale", "Kafka · Kubernetes"],
@@ -233,7 +233,7 @@ export type Role = { logo?: string; mark?: string; company: string; title: strin
 
 export const experience: Role[] = [
   { logo: "/logos/symetri-icon.svg", company: "Symetri Europe", title: "Senior Software Engineer", period: "Aug 2026 – Nov 2026", place: "Full-time · Solna · Hybrid", text: "Owned the internal user-information system and its codebase, working with the Head of Technology and the CISO." },
-  { logo: "/logos/telia.svg", company: "Telia", title: "Lead Software Engineer", period: "Jun 2025 – Aug 2026", place: "Full-time · Solna · On-site", text: "Led engineering on customer-facing portals and services in Broadband Data Mediation, moving them to scalable, containerised deployments." },
+  { logo: "/logos/telia-icon.png", company: "Telia", title: "Lead Software Engineer", period: "Jun 2025 – Aug 2026", place: "Full-time · Solna · On-site", text: "Led engineering on customer-facing portals and services in Broadband Data Mediation, moving them to scalable, containerised deployments." },
   { logo: "/logos/coredination-icon.svg", company: "Coredination", title: "Software Engineer", period: "Oct 2021 – May 2025", place: "Contract · Sundbyberg · On-site", text: "B2B field service SaaS on serverless AWS, React and GraphQL, including five months of backend integrations for Scania." },
   { logo: "/logos/clarge.svg", company: "Clarge", title: "Founder", period: "Jul 2022 – Nov 2026", place: "Stockholm", text: "A software studio that designed, built and ran software for companies." },
   { logo: "/logos/vornify.svg", company: "Vornify", title: "Founder", period: "Mar 2020 – Jul 2021", place: "Self-employed · Stockholm", text: "Founded an open-source backend for reusable CRUD and integrations, the foundation of today's Vornify AI." },

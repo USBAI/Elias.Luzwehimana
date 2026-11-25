@@ -624,7 +624,7 @@ h1,h2,h3,h4,p,figure,dl,dd{margin:0}
 }
 
 /* icon-only company marks */
-.logo-md img[src$="-icon.svg"]{height:34px}
-.logo-sm img[src$="-icon.svg"]{height:20px}
-.avatar-row>.logo:first-child img[src$="-icon.svg"]{height:36px}
-.avatar-row .logo~.logo img[src$="-icon.svg"]{height:24px}
+.logo-md img:is([src$="-icon.svg"],[src$="-icon.png"]){height:34px}
+.logo-sm img:is([src$="-icon.svg"],[src$="-icon.png"]){height:20px}
+.avatar-row>.logo:first-child img:is([src$="-icon.svg"],[src$="-icon.png"]){height:36px}
+.avatar-row .logo~.logo img:is([src$="-icon.svg"],[src$="-icon.png"]){height:24px}
