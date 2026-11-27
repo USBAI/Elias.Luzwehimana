@@ -2,8 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  CHANNELS, CONTACT_LABEL, CONTACT_STATUSES, PLATFORM_LABEL, PLATFORM_STATUSES, STATUSES, STATUS_LABEL,
-  type Col, type Contact, type Job, type Platform,
+  CHANNELS, CONTACT_LABEL, CONTACT_STATUSES, PLATFORM_LABEL, PLATFORM_STATUSES, STATUSES, STATUS_LABEL, TIERS, TIER_LABEL, tierOf,
+  type Col, type Contact, type EmailLead, type Job, type Platform,
 } from "@/lib/work/types";
 
 type Item = { id: string; updatedAt: string; status: string; nextDate?: string } & Record<string, string>;
@@ -29,6 +29,7 @@ const JOB_FIELDS: Field[] = [
   { key: "location", label: "Location", placeholder: "Stockholm · Hybrid" },
   { key: "source", label: "Found via", placeholder: "The Hub, LinkedIn, referral…" },
   { key: "status", label: "Status", type: "select", options: pairs(STATUSES, STATUS_LABEL) },
+  { key: "tier", label: "Priority", type: "select", options: [["", "Auto, from the title"], ...TIERS.map((t) => [t, `${t} · ${TIER_LABEL[t]}`] as [string, string])] },
   { key: "appliedAt", label: "Applied on", type: "date" },
   { key: "nextStep", label: "Next step", placeholder: "Follow up with recruiter" },
   { key: "nextDate", label: "Next step date", type: "date" },
@@ -48,6 +49,19 @@ const CONTACT_FIELDS: Field[] = [
   { key: "nextDate", label: "Next step date", type: "date" },
   { key: "notes", label: "Notes", type: "area", wide: true, placeholder: "What you wrote, what they answered…" },
 ];
+const EMAIL_FIELDS: Field[] = [
+  { key: "email", label: "Email", required: true, placeholder: "name@company.com" },
+  { key: "name", label: "Name" },
+  { key: "company", label: "Company" },
+  { key: "title", label: "Their role", placeholder: "Founder, CTO, Head of Engineering…" },
+  { key: "source", label: "Where you found it", wide: true, placeholder: "Link to the page, or “company site”, “YC profile”…" },
+  { key: "about", label: "Why them", wide: true, placeholder: "Founding engineer role, small AI team in Stockholm…" },
+  { key: "status", label: "Status", type: "select", options: pairs(CONTACT_STATUSES, CONTACT_LABEL) },
+  { key: "sentAt", label: "Email sent on", type: "date" },
+  { key: "nextStep", label: "Next step", placeholder: "Follow up if no reply" },
+  { key: "nextDate", label: "Next step date", type: "date" },
+  { key: "notes", label: "Notes", type: "area", wide: true, placeholder: "What you wrote, what they answered…" },
+];
 const PLATFORM_FIELDS: Field[] = [
   { key: "name", label: "Platform", required: true },
   { key: "focus", label: "Good for", placeholder: "Nordic startups" },
@@ -57,18 +71,21 @@ const PLATFORM_FIELDS: Field[] = [
   { key: "notes", label: "Notes", type: "area", wide: true, placeholder: "Username, saved searches, alerts set up…" },
 ];
 
-type View = "jobs" | "contacts" | "platforms";
+type View = "jobs" | "contacts" | "emails" | "platforms";
 const VIEWS: Record<View, { label: string; add: string; noun: string; fields: Field[]; statuses: [string, string][]; first: string; doneKey?: string; quick?: [string, string] }> = {
   jobs: { label: "Roles", add: "+ Add role", noun: "role", fields: JOB_FIELDS, statuses: pairs(STATUSES, STATUS_LABEL), first: "saved", doneKey: "appliedAt", quick: ["applied", "Mark applied"] },
   contacts: { label: "People", add: "+ Add person", noun: "person", fields: CONTACT_FIELDS, statuses: pairs(CONTACT_STATUSES, CONTACT_LABEL), first: "todo", doneKey: "sentAt", quick: ["sent", "Mark sent"] },
+  emails: { label: "Emails", add: "+ Add email", noun: "email", fields: EMAIL_FIELDS, statuses: pairs(CONTACT_STATUSES, CONTACT_LABEL), first: "todo", doneKey: "sentAt", quick: ["sent", "Mark sent"] },
   platforms: { label: "Platforms", add: "+ Add platform", noun: "platform", fields: PLATFORM_FIELDS, statuses: pairs(PLATFORM_STATUSES, PLATFORM_LABEL), first: "todo" },
 };
 
-export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Platform[]; loadError: string }) {
+export function Tracker(props: { jobs: Job[]; contacts: Contact[]; emails: EmailLead[]; platforms: Platform[]; loadError: string }) {
   const router = useRouter();
-  const [data, setData] = useState<Record<View, Item[]>>({ jobs: props.jobs as unknown as Item[], contacts: props.contacts as unknown as Item[], platforms: props.platforms as unknown as Item[] });
+  const [data, setData] = useState<Record<View, Item[]>>({ jobs: props.jobs as unknown as Item[], contacts: props.contacts as unknown as Item[], emails: props.emails as unknown as Item[], platforms: props.platforms as unknown as Item[] });
   const [view, setView] = useState<View>("jobs");
-  const [tab, setTab] = useState<Record<View, string>>({ jobs: "saved", contacts: "todo", platforms: "todo" });
+  const [tab, setTab] = useState<Record<View, string>>({ jobs: "saved", contacts: "todo", emails: "todo", platforms: "todo" });
+  const [tier, setTier] = useState("");
+  const [copied, setCopied] = useState(false);
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Item | "new" | null>(null);
   const [error, setError] = useState(props.loadError);
@@ -79,9 +96,13 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
   const setItems = (col: View, fn: (all: Item[]) => Item[]) => setData((d) => ({ ...d, [col]: fn(d[col]) }));
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return q ? items.filter((j) => Object.values(j).join(" ").toLowerCase().includes(q)) : items;
-  }, [items, query]);
-  const inStatus = (s: string) => shown.filter((j) => j.status === s).sort((a, b) => (a.nextDate || "9999").localeCompare(b.nextDate || "9999") || b.updatedAt.localeCompare(a.updatedAt));
+    const found = q ? items.filter((j) => Object.values(j).join(" ").toLowerCase().includes(q)) : items;
+    return view === "jobs" && tier ? found.filter((j) => tierOf(j) === tier) : found;
+  }, [items, query, view, tier]);
+  /* Roles: best match first (founding, then product and platform, then the rest). Inside a group, the nearest next step first. */
+  const rank = (j: Item) => (view === "jobs" ? tierOf(j) : "");
+  const inStatus = (s: string) => shown.filter((j) => j.status === s).sort((a, b) => rank(a).localeCompare(rank(b)) || (a.nextDate || "9999").localeCompare(b.nextDate || "9999") || b.updatedAt.localeCompare(a.updatedAt));
+  const copyEmails = async () => { await navigator.clipboard.writeText(shown.filter((j) => j.status === "todo").map((j) => j.email).join(", ")); setCopied(true); setTimeout(() => setCopied(false), 1800); };
   const count = (col: View, s: string) => data[col].filter((j) => j.status === s).length;
   const isDue = (j: Item, closed: string) => !!j.nextDate && j.nextDate <= today() && j.status !== closed;
   const due = data.jobs.filter((j) => isDue(j, "rejected")).length + data.contacts.filter((j) => isDue(j, "closed")).length;
@@ -135,6 +156,20 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
         ))}
       </nav>
 
+      {view === "jobs" && (
+        <nav className="w-tiers" aria-label="Priority">
+          <span>Best match first</span>
+          <button data-active={tier === ""} onClick={() => setTier("")}>All<b>{data.jobs.length}</b></button>
+          {TIERS.map((t) => <button key={t} data-tier={t} data-active={tier === t} onClick={() => setTier(tier === t ? "" : t)}><i>{t}</i>{TIER_LABEL[t]}<b>{data.jobs.filter((j) => tierOf(j) === t).length}</b></button>)}
+        </nav>
+      )}
+      {view === "emails" && (
+        <nav className="w-tiers" aria-label="Emails">
+          <span>Collected for cold outreach</span>
+          <button onClick={copyEmails} disabled={!count("emails", "todo")}>{copied ? "Copied" : "Copy the “To contact” addresses"}<b>{count("emails", "todo")}</b></button>
+        </nav>
+      )}
+
       {error && <p className="w-error" role="alert">{error}</p>}
 
       {view === "platforms" ? (
@@ -169,18 +204,19 @@ export function Tracker(props: { jobs: Job[]; contacts: Contact[]; platforms: Pl
                   onDragLeave={() => setOver((o) => (o === s ? null : o))}
                   onDrop={() => { const item = items.find((j) => j.id === dragId.current); setOver(null); if (item) move(item, s); }}>
                   <h2><i />{label}<b>{list.length}</b></h2>
-                  {list.length === 0 && <p className="w-empty">{n === 0 ? (view === "jobs" ? "Roles you want to apply for land here." : "People you plan to message land here.") : "Nothing here yet."}</p>}
+                  {list.length === 0 && <p className="w-empty">{n === 0 ? (view === "jobs" ? "Roles you want to apply for land here." : view === "emails" ? "Emails you collect for cold outreach land here." : "People you plan to message land here.") : "Nothing here yet."}</p>}
                   {list.map((j) => {
-                    const link = view === "jobs" ? j.url : j.handle;
+                    const link = view === "jobs" ? j.url : view === "emails" ? j.email : j.handle;
                     return (
                       <article key={j.id} className="w-card" data-closed={s === closed} draggable onDragStart={() => { dragId.current = j.id; }}>
                         <Main prep={view === "jobs" && s === "interview" ? `/work/interview/${j.id}` : ""} onEdit={() => setEditing(j)}>
                           {view === "jobs" ? (
                             <><span className="w-company">{j.company}</span><span className="w-role">{j.role}</span>
+                              {tierOf(j) !== "3" && <span className="w-tier" data-tier={tierOf(j)}>{TIER_LABEL[tierOf(j)]}</span>}
                               {(j.location || j.source) && <span className="w-meta">{[j.location, j.source].filter(Boolean).join(" · ")}</span>}</>
                           ) : (
-                            <><span className="w-company">{j.name}</span><span className="w-role">{[j.title, j.company].filter(Boolean).join(" · ")}</span>
-                              <span className="w-meta">{[j.channel, j.about].filter(Boolean).join(" · ")}</span></>
+                            <><span className="w-company">{j.name || j.company || j.email}</span><span className="w-role">{[j.title, j.name ? j.company : ""].filter(Boolean).join(" · ")}</span>
+                              <span className="w-meta">{[view === "emails" ? "" : j.channel, j.about].filter(Boolean).join(" · ")}</span></>
                           )}
                           {(j.nextStep || j.nextDate) && <span className="w-next" data-late={isDue(j, closed)}>{j.nextDate && <b>{nice(j.nextDate)}</b>}{j.nextStep || "Follow up"}</span>}
                           {cfg.doneKey && j[cfg.doneKey] && <span className="w-meta">{view === "jobs" ? "Applied" : "Sent"} {nice(j[cfg.doneKey])}</span>}

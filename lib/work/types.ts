@@ -1,5 +1,5 @@
-/* Four collections: roles to apply for, people contacted, the platforms used to find roles, and interview prep (one per role). */
-export const COLLECTIONS = ["jobs", "contacts", "platforms", "prep"] as const;
+/* Five collections: roles to apply for, people contacted, collected emails for cold outreach, the platforms used to find roles, and interview prep (one per role). */
+export const COLLECTIONS = ["jobs", "contacts", "emails", "platforms", "prep"] as const;
 export type Col = (typeof COLLECTIONS)[number];
 export const isCol = (v: string): v is Col => (COLLECTIONS as readonly string[]).includes(v);
 
@@ -8,7 +8,15 @@ type Base = { id: string; createdAt: string; updatedAt: string };
 export const STATUSES = ["saved", "applied", "interview", "offer", "rejected"] as const;
 export type Status = (typeof STATUSES)[number];
 export const STATUS_LABEL: Record<Status, string> = { saved: "To apply", applied: "Applied", interview: "Interview", offer: "Offer", rejected: "Closed" };
-export type JobInput = { company: string; role: string; url: string; location: string; source: string; salary: string; status: Status; appliedAt: string; nextStep: string; nextDate: string; notes: string };
+/* Priority: 1 founding engineer, 2 product or platform engineer, 3 everything else. Empty means "decide from the title". */
+export const TIERS = ["1", "2", "3"] as const;
+export type Tier = (typeof TIERS)[number];
+export const TIER_LABEL: Record<Tier, string> = { "1": "Founding", "2": "Product / Platform", "3": "Other roles" };
+export const tierOf = (job: Record<string, string | undefined>): Tier =>
+  (TIERS as readonly string[]).includes(job.tier ?? "") ? (job.tier as Tier)
+    : /founding|first engineer|founder/i.test(job.role ?? "") ? "1"
+    : /product|platform/i.test(job.role ?? "") ? "2" : "3";
+export type JobInput = { company: string; role: string; url: string; location: string; source: string; salary: string; tier: string; status: Status; appliedAt: string; nextStep: string; nextDate: string; notes: string };
 export type Job = Base & JobInput;
 
 export const CONTACT_STATUSES = ["todo", "sent", "replied", "call", "closed"] as const;
@@ -17,6 +25,10 @@ export const CONTACT_LABEL: Record<ContactStatus, string> = { todo: "To contact"
 export const CHANNELS = ["LinkedIn", "Email", "Other"] as const;
 export type ContactInput = { name: string; company: string; title: string; channel: string; handle: string; about: string; status: ContactStatus; sentAt: string; nextStep: string; nextDate: string; notes: string };
 export type Contact = Base & ContactInput;
+
+/* Collected emails for cold outreach: founders, CTOs and hiring managers found outside a job ad. Same steps as People. */
+export type EmailInput = { email: string; name: string; company: string; title: string; source: string; about: string; status: ContactStatus; sentAt: string; nextStep: string; nextDate: string; notes: string };
+export type EmailLead = Base & EmailInput;
 
 export const PLATFORM_STATUSES = ["todo", "account", "ready", "active"] as const;
 export type PlatformStatus = (typeof PLATFORM_STATUSES)[number];
@@ -49,7 +61,7 @@ const SHAPES: Record<Col, { fields: Record<string, Field>; required: string[] }>
   jobs: {
     required: ["company", "role"],
     fields: {
-      company: (v) => text(v, 120), role: (v) => text(v, 160), url: link, location: (v) => text(v, 120), source: (v) => text(v, 80), salary: (v) => text(v, 80),
+      company: (v) => text(v, 120), role: (v) => text(v, 160), url: link, location: (v) => text(v, 120), source: (v) => text(v, 80), salary: (v) => text(v, 80), tier: (v) => oneOf(["", ...TIERS], v, ""),
       status: (v) => oneOf(STATUSES, v, "saved"), appliedAt: date, nextStep: (v) => text(v, 200), nextDate: date, notes: (v) => text(v, 6000),
     },
   },
@@ -57,6 +69,13 @@ const SHAPES: Record<Col, { fields: Record<string, Field>; required: string[] }>
     required: ["name"],
     fields: {
       name: (v) => text(v, 120), company: (v) => text(v, 120), title: (v) => text(v, 160), channel: (v) => oneOf(CHANNELS, v, "LinkedIn"), handle: link, about: (v) => text(v, 200),
+      status: (v) => oneOf(CONTACT_STATUSES, v, "todo"), sentAt: date, nextStep: (v) => text(v, 200), nextDate: date, notes: (v) => text(v, 6000),
+    },
+  },
+  emails: {
+    required: ["email"],
+    fields: {
+      email: (v) => text(v, 200).toLowerCase(), name: (v) => text(v, 120), company: (v) => text(v, 120), title: (v) => text(v, 160), source: link, about: (v) => text(v, 200),
       status: (v) => oneOf(CONTACT_STATUSES, v, "todo"), sentAt: date, nextStep: (v) => text(v, 200), nextDate: date, notes: (v) => text(v, 6000),
     },
   },
